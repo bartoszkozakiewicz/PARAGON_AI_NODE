@@ -1,0 +1,40 @@
+enum Role {
+    USER
+    ADMIN
+}
+
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id                          Int       @id @default(autoincrement())
+    email                       String    @unique
+    name                        String
+    password                    String
+    role                        Role      @default(USER)
+    createdAt                   DateTime  @default(now())
+    verificationToken           String?
+    isVerified                  Boolean   @default(false)
+    verified                    DateTime?
+    passwordToken               String?
+    passwordTokenExpirationDate String?
+    Token                       Token?
+}
+
+model Token {
+    userId       Int      @unique
+    refreshToken String
+    ip           String
+    userAgent    String
+    isValid      Boolean  @default(true)
+    createdAt    DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id])
+}
