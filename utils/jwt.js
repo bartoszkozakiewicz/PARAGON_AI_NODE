@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken")
 
+
+const verifyJWT = (token) => jwt.verify(token,process.env.JWT_SECRET)
+
 const createJWT = ({payload}) =>{
     console.log("JWT",process.env.JWT_SECRET)
     const token = jwt.sign(payload,process.env.JWT_SECRET)
@@ -33,5 +36,6 @@ const attachCookiesToResponse = ({res,user,refreshToken})=>{
 
 module.exports = {
     createJWT,
-    attachCookiesToResponse
+    attachCookiesToResponse,
+    verifyJWT
 }

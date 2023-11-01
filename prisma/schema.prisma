@@ -3,6 +3,14 @@ enum Role {
     ADMIN
 }
 
+enum Category {
+    pozywienie
+    art_budowlany
+    art_gosp_dom
+    alkohol
+    art_papier
+}
+
 generator client {
     provider      = "prisma-client-js"
     binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
@@ -14,18 +22,19 @@ datasource db {
 }
 
 model User {
-    id                          Int       @id @default(autoincrement())
-    email                       String    @unique
+    id                          Int        @id @default(autoincrement())
+    email                       String     @unique
     name                        String
     password                    String
-    role                        Role      @default(USER)
-    createdAt                   DateTime  @default(now())
+    role                        Role       @default(USER)
+    createdAt                   DateTime   @default(now())
     verificationToken           String?
-    isVerified                  Boolean   @default(false)
+    isVerified                  Boolean    @default(false)
     verified                    DateTime?
     passwordToken               String?
     passwordTokenExpirationDate String?
     Token                       Token?
+    Shopping                    Shopping[]
 }
 
 model Token {
@@ -37,4 +46,23 @@ model Token {
     createdAt    DateTime @default(now())
 
     user User @relation(fields: [userId], references: [id])
+}
+
+model Shopping {
+    id        Int       @id @default(autoincrement())
+    userId    Int
+    date      DateTime
+    shop_name String
+    price_sum Int
+    user      User      @relation(fields: [userId], references: [id])
+    Product   Product[]
+}
+
+model Product {
+    id       Int      @id @default(autoincrement())
+    shopId   Int
+    name     String
+    amount   Int
+    category Category
+    shopping Shopping @relation(fields: [shopId], references: [id])
 }

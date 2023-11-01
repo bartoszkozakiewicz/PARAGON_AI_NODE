@@ -2,6 +2,7 @@ const express = require("express")
 require('express-async-errors');
 
 const authRouter = require("./routes/authRoutes")
+const userRouter = require("./routes/userRoutes")
 require('dotenv').config();
 const cors = require("cors")
 
@@ -28,7 +29,7 @@ app.use(cors(corsOptions))
 
 //Routers
 app.use("/api/v1/auth",authRouter)
-
+app.use("/api/v1/user",userRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)

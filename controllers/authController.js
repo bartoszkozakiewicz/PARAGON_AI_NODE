@@ -7,7 +7,6 @@ const crypto = require('crypto');
 const {StatusCodes} = require("http-status-codes")
 
 const login = async (req,res) =>{
-    console.log("cokolwiek")
     console.log(req.body)
     const {email,password} = req.body
 
@@ -46,7 +45,6 @@ const login = async (req,res) =>{
     // If there is token, check if it is valid, if so then attach cookies with user data
     let refreshToken = ""
     if(existingToken){
-        console.log("istnial")
 
         const {isValid} = existingToken
         if(!isValid){
@@ -55,13 +53,12 @@ const login = async (req,res) =>{
         refreshToken = existingToken.refreshToken
 
         attachCookiesToResponse({res,user:tokenData,refreshToken})
-        res.status(StatusCodes.OK).json({ msg:"Successfully logged in" });
+        res.status(StatusCodes.OK).json({ user: tokenData });
         return
     }
 
     //If there is no token yet, then create one
     if (!existingToken){ 
-        console.log("nie istnial")
         refreshToken = crypto.randomBytes(40).toString("hex")
         const userAgent = req.headers["user-agent"]
         const ip = req.ip
@@ -76,13 +73,39 @@ const login = async (req,res) =>{
         })
 
         attachCookiesToResponse({res,user:tokenData,refreshToken})
-        res.status(StatusCodes.OK).json({msg:"Successfully logged in"});
+        res.status(StatusCodes.OK).json({user:tokenData});
         return
 
     }
 
-    attachCookiesToResponse({res,user:tokenData,refreshToken:""})
-    res.status(200).json({msg:"Successfully logged in"})
+}
+
+const logout = async (req,res) =>{
+    console.log("USER",req.body.userId)
+    try{
+        await prisma.token.delete({
+            where:{
+                userId:req.body.userId
+            }
+        })
+    }catch(err){
+        throw new CustomError.BadRequestError("Something went wrong")
+    }
+
+    // Clear the accessToken and refreshToken cookies
+    res.cookie('accessToken', 'logout', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    signed: true,
+    expires: new Date(Date.now()),
+    });
+    res.cookie('refreshToken', 'logout', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    signed: true,
+    expires: new Date(Date.now()),
+    });
+    res.status(200).json({msg:"User logged out"})
 }
 
 const register = async (req,res) =>{
@@ -129,6 +152,7 @@ const forgotPassword = async (req,res) =>{
 
 module.exports = {
     login,
+    logout,
     register,
     forgotPassword
 }
