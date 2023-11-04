@@ -19,7 +19,6 @@ const addElement = async (req,res)=>{
     switch(category){
         case "Spozywcze":
             try{
-                console.log("PRZEd",req.user.userId,data.shop.date,data.shop.name,data.sumPrice)
                 const shop = await prisma.shopping.create({
                     data:{
                         userId:req.user.userId,
@@ -31,7 +30,6 @@ const addElement = async (req,res)=>{
                 if(shop){
                     
                     data.actualData.map(async(product)=>{
-                        console.log("x",Cat[product.category], product.name,Number(product.amount),Number(product.price))
                         await prisma.product.create({
                             data:{
                                 shopId: shop.id,
@@ -52,41 +50,69 @@ const addElement = async (req,res)=>{
             }
             break
 
-        // case "Rozrywka":
-        //     await prisma.entertainment.create({
-        //         data:{
-        //             name,
-        //             date,
-        //             price,
-        //             amount,
-        //             userId:req.user.userId,
-        //         }
-        //     })
-        //     break
-        // case "Transport":
-        //     await prisma.transport.create({
-        //         data:{
-        //             name,
-        //             date,
-        //             price,
-        //             amount,
-        //             userId:req.user.userId,
-        //         }
-        //     })
-        //     break
-        // case "Pozostałe":
-        //     await prisma.other.create({
-        //         data:{
-        //             name,
-        //             date,
-        //             price,
-        //             amount,
-        //             userId:req.user.userId
-        //         }
-        //     })
-        //     break
+        case "Rozrywka":
+            try{
+                console.log("Add rozrywka")
+                data.actualData.map(async(product)=>{
+                    await prisma.entertainment.create({
+                        data:{
+                            name:product.name,
+                            date:data.shop.date,
+                            price:Number(product.price),
+                            amount:Number(product.amount),
+                            userId:req.user.userId,
+                        }
+                    })
+                })
+                return res.status(StatusCodes.OK).json("Successfully added entertainment")
+            }catch(e){
+                res.status(StatusCodes.BAD_REQUEST).json({"msg":e})
+            }
+            break
+
+        case "Transport":
+            try{
+
+                data.actualData.map(async(product)=>{
+                    
+                    await prisma.transport.create({
+                        data:{
+                            name:product.name,
+                            date:data.shop.date,
+                            price:Number(product.price),
+                            amount:Number(product.amount),
+                            userId:req.user.userId,
+                      
+                        }
+                    })
+                })
+                return res.status(StatusCodes.OK).json("Successfully added transport")
+            }catch(e){
+                res.status(StatusCodes.BAD_REQUEST).json({"msg":e})
+            }
+            break
+
+        case "Pozostałe":
+            try{
+
+                data.actualData.map(async(product)=>{
+                    
+                    await prisma.other.create({
+                        data:{
+                            name:product.name,
+                            date:data.shop.date,
+                            price:Number(product.price),
+                            amount:Number(product.amount),
+                            userId:req.user.userId
+                        }
+                    })
+                })
+                return res.status(StatusCodes.OK).json("Successfully added other")
+            }catch(e){
+                res.status(StatusCodes.BAD_REQUEST).json({"msg":e})
+            }
+            break
     }
-    // const prisma.
 }
 
 
