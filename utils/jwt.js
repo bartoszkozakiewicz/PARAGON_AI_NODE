@@ -24,7 +24,7 @@ const attachCookiesToResponse = ({res,user,refreshToken})=>{
         signed: true,
         expires: new Date(Date.now() + oneDay),
     })
-
+    console.log("Dodałem accessToken",accessTokenJWT)
     //attach accessToken
     res.cookie("refreshToken",refreshTokenJWT,{
         http:true,

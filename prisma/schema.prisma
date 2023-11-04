@@ -1,68 +1,95 @@
-enum Role {
-    USER
-    ADMIN
-}
-
-enum Category {
-    pozywienie
-    art_budowlany
-    art_gosp_dom
-    alkohol
-    art_papier
-}
-
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id                          Int        @id @default(autoincrement())
-    email                       String     @unique
-    name                        String
-    password                    String
-    role                        Role       @default(USER)
-    createdAt                   DateTime   @default(now())
-    verificationToken           String?
-    isVerified                  Boolean    @default(false)
-    verified                    DateTime?
-    passwordToken               String?
-    passwordTokenExpirationDate String?
-    Token                       Token?
-    Shopping                    Shopping[]
+  id                          Int        @id @default(autoincrement())
+  email                       String     @unique
+  name                        String
+  password                    String
+  role                        Role       @default(USER)
+  createdAt                   DateTime   @default(now())
+  verificationToken           String?
+  isVerified                  Boolean    @default(false)
+  verified                    DateTime?
+  passwordToken               String?
+  passwordTokenExpirationDate String?
+  Shopping                    Shopping[]
+  Token                       Token?
 }
 
 model Token {
-    userId       Int      @unique
-    refreshToken String
-    ip           String
-    userAgent    String
-    isValid      Boolean  @default(true)
-    createdAt    DateTime @default(now())
+  userId       Int      @unique
+  ip           String
+  userAgent    String
+  isValid      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  refreshToken String
+  user         User     @relation(fields: [userId], references: [id])
+}
 
-    user User @relation(fields: [userId], references: [id])
+model Entertainment {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  name      String
+  date      String
+  price     Float
+  amount    Int
+}
+
+model Transport {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  name      String
+  date      String
+  price     Float
+  amount    Int
+}
+
+model Other {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  name      String
+  date      String
+  price     Float
+  amount    Int
 }
 
 model Shopping {
-    id        Int       @id @default(autoincrement())
-    userId    Int
-    date      DateTime
-    shop_name String
-    price_sum Int
-    user      User      @relation(fields: [userId], references: [id])
-    Product   Product[]
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  date      String
+  shop_name String
+  price_sum Float
+  Product   Product[]
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Product {
-    id       Int      @id @default(autoincrement())
-    shopId   Int
-    name     String
-    amount   Int
-    category Category
-    shopping Shopping @relation(fields: [shopId], references: [id])
+  id       Int      @id @default(autoincrement())
+  shopId   Int
+  name     String
+  amount   Int
+  price    Float
+  category Category
+  shopping Shopping @relation(fields: [shopId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Category {
+  Pozywienie
+  art_budowlany
+  art_gosp_dom
+  Alkohol
+  art_papier
 }

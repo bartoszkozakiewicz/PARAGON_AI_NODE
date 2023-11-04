@@ -9,7 +9,7 @@ const {StatusCodes} = require("http-status-codes")
 const login = async (req,res) =>{
     console.log(req.body)
     const {email,password} = req.body
-
+    console.log("LOGIN-LOGIN")
     if(!email || !password){
         throw new CustomError.UnauthenticatedError("Please provide email and password")
     }

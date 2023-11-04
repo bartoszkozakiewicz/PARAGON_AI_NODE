@@ -3,6 +3,7 @@ require('express-async-errors');
 
 const authRouter = require("./routes/authRoutes")
 const userRouter = require("./routes/userRoutes")
+const productRouter = require("./routes/productsRoutes")
 require('dotenv').config();
 const cors = require("cors")
 
@@ -30,6 +31,7 @@ app.use(cors(corsOptions))
 //Routers
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/user",userRouter)
+app.use("/api/v1/product",productRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
