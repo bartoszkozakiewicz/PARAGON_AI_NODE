@@ -115,8 +115,95 @@ const addElement = async (req,res)=>{
     }
 }
 
+const getAllData = async(req,res) =>{
+    console.log("geting all data")
+    const user = req.user
+    console.log("0",user)
+    try{
+        const shoppingData = await prisma.shopping.findMany({
+            where:{
+                userId: user.userId
+            }
+        })
+        console.log("1",shoppingData)
+        const enterData = await prisma.entertainment.findMany({
+            where:{
+                userId: user.userId
+            }
+        })
+        console.log("2",enterData)
 
+        const transportData = await prisma.transport.findMany({
+            where:{
+                userId: user.userId
+            }
+        })
+        console.log("3",transportData)
+
+        const otherData = await prisma.other.findMany({
+            where:{
+                userId: user.userId
+            }
+        })
+        console.log("4",otherData)
+
+        res.status(StatusCodes.OK).json({shoppingData,enterData,transportData,otherData})
+
+    }catch(e){
+        res.status(StatusCodes.BAD_REQUEST).json({"msg":e})
+    }
+}
+
+const deleteElements = async (req,res) =>{
+    const user = req.user
+    const data = req.body
+    console.log("Usuwam elementy",data)
+    try{
+
+        data.forEach(async(element) => {
+            switch (element.category){
+                case "Shopping":
+                    console.log("Usuwam shopping")
+                    await prisma.shopping.delete({
+                        where:{
+                            id:element.realId
+                        }
+                    })
+                    break
+                case "Entertainment":
+                    console.log("Usuwam entertainment")
+                    await prisma.entertainment.delete({
+                        where:{
+                            id:element.realId
+                        }
+                    })
+                    break
+                case "Transport":
+                    await prisma.transport.delete({
+                        where:{
+                            id:element.realId
+                        }
+                    })
+                    break
+                case "Other":
+                    await prisma.other.delete({
+                        where:{
+                            id:element.realId
+                        }
+                    })
+                    break
+                }
+                });
+        res.status(StatusCodes.OK).json({mdg:"Successfully deleted elements"})
+
+    }catch(e){
+        res.status(StatusCodes.BAD_REQUEST).json({msg:e})
+    }
+
+}
 
 module.exports ={
-    addElement
+    addElement,
+    getAllData,
+    deleteElements
 }

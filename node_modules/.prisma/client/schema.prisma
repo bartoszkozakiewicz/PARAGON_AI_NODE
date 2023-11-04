@@ -67,7 +67,7 @@ model Shopping {
   date      String
   shop_name String
   price_sum Float
-  Product   Product[]
+  Product   Product[] @relation()
   user      User      @relation(fields: [userId], references: [id])
 }
 
@@ -78,7 +78,7 @@ model Product {
   amount   Int
   price    Float
   category Category
-  shopping Shopping @relation(fields: [shopId], references: [id])
+  shopping Shopping @relation(fields: [shopId], references: [id],onDelete: Cascade)
 }
 
 enum Role {
