@@ -199,11 +199,28 @@ const deleteElements = async (req,res) =>{
     }catch(e){
         res.status(StatusCodes.BAD_REQUEST).json({msg:e})
     }
+}
 
+const getParagon = async (req,res) =>{
+    const shopId = req.query.shopId
+    console.log("Get paragon",shopId)
+
+    try{
+        const paragon = await prisma.product.findMany({
+            where:{
+                shopId: Number(shopId)
+            }
+        })
+        console.log("Zebrane",paragon)
+        res.status(StatusCodes.OK).json(paragon)
+    }catch(e){
+        res.status(StatusCodes.BAD_REQUEST).json({"msg":e})
+    }
 }
 
 module.exports ={
     addElement,
     getAllData,
-    deleteElements
+    deleteElements,
+    getParagon
 }
