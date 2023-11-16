@@ -289,11 +289,18 @@ const getNeededData = async(req,res) =>{
             }
         }})   
         shopping.forEach(async(shop)=>{
+            console.log("SHOP ID: ",shop.id)
             products.unshift(await prisma.product.findMany({where:{
                 shopId: shop.id
             }}))
-            products[0].date = shop.date
+            console.log("KURWAA",products)
+            products[0] = products[0] && products[0].map(prod =>({
+                ...prod,
+                date:shop.date,
+            }))
         })
+
+
 
         const other = await prisma.other.findMany({where:{
             date:{
@@ -322,29 +329,53 @@ const getNeededData = async(req,res) =>{
         const sumOtherPrice = aggregateData(other,"other",endData,dateMap)
         const sumShopPrice = aggregateData(shopping,"shopping",endData,dateMap)
 
+
         //Sort the array by date
         endData.sort((a, b) => a.date - b.date);
 
 
-        console.log("prods przed", products)
-        //Sort etc products:
-        products = products.sort((a, b) => a.date - b.date);
+
+        products = products.flat()
+        console.log("Produkty22: ",products)        //Sort etc products:
+
+        // Sortowanie według daty
+        products.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+        
+            return dateA - dateB;
+        });
         console.log("prods po sort",products)
 
-        let currDate = product.date
+
+
+        let currDate = products[0].date
+        let i = 0
         endProducts = [{date:currDate,art_budowlany:0,Pozywienie:0,Alkohol:0,art_papier:0,art_gosp_dom:0}]
 
         products.forEach((product)=>{
-            product.date == currDate ?
-                endProducts[product.category] += product.price
-            :
+            if (product.date == currDate) {
+                console.log("HALO",endProducts[endProducts.length-1][product.category], product.price)
+                ,endProducts[endProducts.length-1][product.category] += product.price
+            } else {
+                i++
                 currDate = product.date
                 endProducts.push({date:currDate,art_budowlany:0,Pozywienie:0,Alkohol:0,art_papier:0,art_gosp_dom:0})
-                endProducts[product.category] += product.price
+                endProducts[endProducts.length-1][product.category] += product.price
+            }
         })  
 
-        console.log("END DATA: ",endData,sumShopPrice, "endProducts: ",endProducts)
-        res.status(200).json({endData,sumTransportPrice,sumEnertainmentPrice,sumOtherPrice,sumShopPrice})
+        //Sumowanie produktów
+        const sumProductPrices = endProducts.reduce((acc,item)=>{
+            Object.keys(item).forEach((key)=>{
+                if (key !== "date"){
+                    acc[key] = (acc[key] || 0) + item[key]
+                }})
+            return acc
+        },{})
+
+
+        res.status(200).json({endData,endProducts,sumProductPrices,sumTransportPrice,sumEnertainmentPrice,sumOtherPrice,sumShopPrice})
 
     }catch(e){
         res.status(400).json({"msg":e})
