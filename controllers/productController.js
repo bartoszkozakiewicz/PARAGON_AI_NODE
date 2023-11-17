@@ -37,8 +37,10 @@ const addElement = async (req,res)=>{
                         }
                     })
                     console.log("DANEEEE", data.actualData, "ORAZ ",shoppingProducts)
+                    let newSumPrice = 0
                     data.actualData.map(async(product)=>{
                         const idExists = shoppingProducts.some((shopProduct) => shopProduct.id === product.id);
+                        newSumPrice += Number(product.price)
                         if (idExists){
                             await prisma.product.update({
                                 where:{
@@ -63,7 +65,18 @@ const addElement = async (req,res)=>{
                             })
                         }
                     })
-                    return res.status(200).json("Succesfully edited data!")
+                    try{
+                        await prisma.shopping.update({
+                            where:{
+                                id:Number(shopId)
+                            },data:{
+                                price_sum:newSumPrice
+                            }
+                        })
+                        return res.status(200).json("Succesfully edited data!")
+                    }catch(e){
+                        return res.status(400).json({msg:e})
+                    }
                 }
                 else{
 
@@ -281,6 +294,7 @@ const getNeededData = async(req,res) =>{
         date2 = "2023-11-15"
     }
 
+    console.log(date1,date2, "asjsjda")
     try{
         const shopping = await prisma.shopping.findMany({where:{
             date:{
