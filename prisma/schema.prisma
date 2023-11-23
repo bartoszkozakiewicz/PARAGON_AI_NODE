@@ -67,6 +67,7 @@ model Shopping {
   date      String
   shop_name String
   price_sum Float
+  Image     Image?
   Product   Product[] @relation()
   user      User      @relation(fields: [userId], references: [id])
 }
@@ -79,6 +80,14 @@ model Product {
   price    Float
   category Category
   shopping Shopping @relation(fields: [shopId], references: [id],onDelete: Cascade)
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  shopId    Int     @unique
+  data      Bytes
+  createdAt DateTime @default(now())
+  Shopping  Shopping @relation(fields: [shopId], references: [id])
 }
 
 enum Role {

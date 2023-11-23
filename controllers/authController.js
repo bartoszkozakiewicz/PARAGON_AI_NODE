@@ -35,7 +35,7 @@ const login = async (req,res) =>{
     //Create token with appropriate data and attach it to cookies
 
     //Data that will be held in tokens
-    const tokenData =  { name: user.name,email:user.email, userId: user.id, role: user.role }
+    const tokenData =  { name: user.name,email:user.email, userId: user.id, role: user.role, createdAt: user.createdAt}
 
 
     const existingToken = await prisma.token.findUnique({
