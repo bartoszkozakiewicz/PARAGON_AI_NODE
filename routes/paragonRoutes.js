@@ -1,10 +1,12 @@
-const express = require("express")
-const {getParagonData} = require("../controllers/paragonController")
-const {authenticateUser} = require("../middleware/authentication")
-const router = express.Router()
+const express = require("express");
+const {
+  getParagonData,
+  getParagonImages,
+} = require("../controllers/paragonController");
+const { authenticateUser } = require("../middleware/authentication");
+const router = express.Router();
 
+router.post("/getParagon", authenticateUser, getParagonData);
+router.get("/getImages", authenticateUser, getParagonImages);
 
-router.post("/getParagon",authenticateUser,getParagonData)
-
-
-module.exports = router
+module.exports = router;

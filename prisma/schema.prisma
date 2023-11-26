@@ -22,6 +22,7 @@ model User {
   passwordTokenExpirationDate String?
   Shopping                    Shopping[]
   Token                       Token?
+  Image                       Image[]
 }
 
 model Token {
@@ -84,10 +85,13 @@ model Product {
 
 model Image {
   id        Int     @id @default(autoincrement())
+  userId    Int
   shopId    Int     @unique
-  data      Bytes
+  data      String
+  date      String
   createdAt DateTime @default(now())
   Shopping  Shopping @relation(fields: [shopId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 enum Role {
