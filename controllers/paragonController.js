@@ -105,7 +105,11 @@ const getParagonData = async (req, res) => {
       },
     });
     console.log("Zakończono dodawanie zdjęcia paragonu");
-    res.status(StatusCodes.OK).json({ message: "Dodano paragon" });
+    res.status(StatusCodes.OK).json({
+      message: "Dodano paragon",
+      products: productDetailsList,
+      shop: shop,
+    });
   } catch (error) {
     console.log(error);
   }

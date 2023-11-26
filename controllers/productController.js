@@ -236,6 +236,22 @@ const getAllData = async (req, res) => {
     res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
   }
 };
+const deleteShopping = async (req, res) => {
+  const shopId = req.query.data;
+
+  try {
+    await prisma.shopping.delete({
+      where: {
+        id: Number(shopId),
+      },
+    });
+    console.log("donrze usunieto");
+    res.status(200).json({ msg: "Successfully deleted shopping" });
+  } catch (err) {
+    console.log("Error: ", err);
+    res.status(400).json({ msg: err });
+  }
+};
 
 const deleteElements = async (req, res) => {
   const user = req.user;
@@ -500,4 +516,5 @@ module.exports = {
   deleteElements,
   getParagon,
   getNeededData,
+  deleteShopping,
 };

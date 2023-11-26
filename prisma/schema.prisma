@@ -90,7 +90,7 @@ model Image {
   data      String
   date      String
   createdAt DateTime @default(now())
-  Shopping  Shopping @relation(fields: [shopId], references: [id])
+  Shopping  Shopping @relation(fields: [shopId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id])
 }
 
