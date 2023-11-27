@@ -87,6 +87,7 @@ const addElement = async (req, res) => {
             });
           }
           try {
+            console.log("Update ceny");
             await prisma.shopping.update({
               where: {
                 id: Number(shopId),
@@ -95,9 +96,9 @@ const addElement = async (req, res) => {
                 price_sum: newSumPrice,
               },
             });
-            return res.status(200).json("Succesfully edited data!");
+            return res.status(200).json("Zmiany zostały zapisane!");
           } catch (e) {
-            return res.status(400).json({ msg: e });
+            return res.status(400).json({ msg: "Coś poszło nie tak..." });
           }
         } else {
           const shop = await prisma.shopping.create({
@@ -123,15 +124,17 @@ const addElement = async (req, res) => {
             });
             return res
               .status(StatusCodes.OK)
-              .json("Successfully added products");
+              .json("Pomyślnie dodano produkty!");
           } else {
             res
               .status(StatusCodes.BAD_REQUEST)
-              .json({ msg: "Something went wrong" });
+              .json({ msg: "Coś poszło nie tak..." });
           }
         }
       } catch (e) {
-        res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ msg: "Coś poszło nie tak..." });
       }
       break;
 
@@ -149,11 +152,11 @@ const addElement = async (req, res) => {
             },
           });
         });
-        return res
-          .status(StatusCodes.OK)
-          .json("Successfully added entertainment");
+        return res.status(StatusCodes.OK).json("Pomyślnie dodano!");
       } catch (e) {
-        res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ msg: "Coś poszło nie tak..." });
       }
       break;
 
@@ -170,9 +173,11 @@ const addElement = async (req, res) => {
             },
           });
         });
-        return res.status(StatusCodes.OK).json("Successfully added transport");
+        return res.status(StatusCodes.OK).json("Pomyślnie dodano transport!");
       } catch (e) {
-        res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ msg: "Coś poszło nie tak..." });
       }
       break;
 
@@ -189,9 +194,11 @@ const addElement = async (req, res) => {
             },
           });
         });
-        return res.status(StatusCodes.OK).json("Successfully added other");
+        return res.status(StatusCodes.OK).json("Pomyślnie dodano inne!");
       } catch (e) {
-        res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ msg: "Coś poszło nie tak..." });
       }
       break;
   }
@@ -233,7 +240,7 @@ const getAllData = async (req, res) => {
       .status(StatusCodes.OK)
       .json({ shoppingData, enterData, transportData, otherData });
   } catch (e) {
-    res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+    res.status(StatusCodes.BAD_REQUEST).json({ msg: "Coś poszło nie tak..." });
   }
 };
 const deleteShopping = async (req, res) => {
@@ -246,7 +253,7 @@ const deleteShopping = async (req, res) => {
       },
     });
     console.log("donrze usunieto");
-    res.status(200).json({ msg: "Successfully deleted shopping" });
+    res.status(200).json({ msg: "Pomyślnie usunięto zakupy" });
   } catch (err) {
     console.log("Error: ", err);
     res.status(400).json({ msg: err });
@@ -292,9 +299,9 @@ const deleteElements = async (req, res) => {
           break;
       }
     });
-    res.status(StatusCodes.OK).json({ mdg: "Successfully deleted elements" });
+    res.status(StatusCodes.OK).json({ msg: "Pomyślnie usunięto elementy!" });
   } catch (e) {
-    res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+    res.status(StatusCodes.BAD_REQUEST).json({ msg: "Coś poszło nie tak..." });
   }
 };
 
@@ -311,7 +318,7 @@ const getParagon = async (req, res) => {
     console.log("Zebrane", paragon);
     res.status(StatusCodes.OK).json(paragon);
   } catch (e) {
-    res.status(StatusCodes.BAD_REQUEST).json({ msg: e });
+    res.status(StatusCodes.BAD_REQUEST).json({ msg: "Coś poszło nie tak..." });
   }
 };
 
