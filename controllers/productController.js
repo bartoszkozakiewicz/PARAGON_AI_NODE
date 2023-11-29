@@ -10,6 +10,79 @@ const Cat = {
   "Art. papierniczy": "art_papier",
 };
 
+const getSum = async (req, res) => {
+  const currentDate = new Date();
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+
+  console.log("rstart", currentDate, firstDayOfMonth.toISOString());
+
+  try {
+    const sumShopping = await prisma.shopping.aggregate({
+      _sum: {
+        price_sum: true,
+      },
+      where: {
+        date: {
+          gte: firstDayOfMonth.toISOString().split("T")[0],
+          lte: currentDate.toISOString().split("T")[0],
+        },
+      },
+    });
+    console.log(sumShopping._sum.price_sum, " | ", sumShopping._sum);
+    const sumOther = await prisma.other.aggregate({
+      _sum: {
+        price: true,
+      },
+      where: {
+        date: {
+          gte: firstDayOfMonth.toISOString().split("T")[0],
+          lte: currentDate.toISOString().split("T")[0],
+        },
+      },
+    });
+    console.log(sumOther._sum.price, " o| ", sumOther._sum);
+
+    const sumEntertainment = await prisma.entertainment.aggregate({
+      _sum: {
+        price: true,
+      },
+      where: {
+        date: {
+          gte: firstDayOfMonth.toISOString().split("T")[0],
+          lte: currentDate.toISOString().split("T")[0],
+        },
+      },
+    });
+    console.log(sumEntertainment._sum.price, " e| ", sumEntertainment._sum);
+
+    const sumTransport = await prisma.transport.aggregate({
+      _sum: {
+        price: true,
+      },
+      where: {
+        date: {
+          gte: firstDayOfMonth.toISOString().split("T")[0],
+          lte: currentDate.toISOString().split("T")[0],
+        },
+      },
+    });
+    console.log(sumTransport._sum.price, " t| ", sumTransport._sum);
+
+    const sum =
+      sumShopping._sum.price_sum +
+      sumOther._sum.price +
+      sumEntertainment._sum.price +
+      sumTransport._sum.price;
+    return res.status(StatusCodes.OK).json({ sum: sum });
+  } catch (e) {
+    return res.status(200).json({ msg: "Something went wrong" });
+  }
+};
+
 const addElement = async (req, res) => {
   const data = req.body;
   const category = req.query.cat;
@@ -333,7 +406,6 @@ const getNeededData = async (req, res) => {
   if (date2 == "x") {
     date2 = "2023-11-15";
   }
-
   console.log(date1, date2, "asjsjda");
   try {
     const shopping = await prisma.shopping.findMany({
@@ -524,4 +596,5 @@ module.exports = {
   getParagon,
   getNeededData,
   deleteShopping,
+  getSum,
 };
